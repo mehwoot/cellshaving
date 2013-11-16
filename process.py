@@ -1,16 +1,22 @@
 import csv
 import sys
-from scipy import misc
 import math
 
 # Config options
 header_line = False
 accurate = False
 
+
+def choose(n,k):
+    if k == 0:
+    	return 1.0
+    return float((n * choose(n - 1, k - 1)) / k)
+
+
 def hypergeometric_distribution(N,K,n,k):
-	numerator_1 = misc.comb(K,k).tolist()
-	numerator_2 = misc.comb(N-K,n-k).tolist()
-	denominator = misc.comb(N,n).tolist()
+	numerator_1 = choose(K,k)
+	numerator_2 = choose(N-K,n-k)
+	denominator = choose(N,n)
 	return ((numerator_1 * numerator_2) / (denominator))
 
 # Round up to the nearest odd number so that the number of
@@ -33,6 +39,10 @@ def calculate_bayesian_probability(prior, experimental):
 	return (prior * experimental) / ((prior * experimental) + ((1 - prior) * (1- experimental)))
 
 
+
+def print_header():
+	print "Control Peptides,Shaved Peptides,Bayesian Prior,Experimental Probability,Calculated Bayesian Probability"
+
 def process_line(values, line_number):
 	if len(values) < 3:
 		print >> sys.stderr, "Fatal error: Line", line_number, "does not have enough values on it"
@@ -47,17 +57,26 @@ def process_line(values, line_number):
 	fifty_percent_cutoff = int(math.ceil(float(sample_size) / 2))
 	total_probability = 0
 
-	for i in range(fifty_percent_cutoff, sample_size + 1):
-		total_probability += hypergeometric_distribution(total_size,control_peptides,sample_size,i)
+	if total_size < 5:
+		if shaved_peptides > control_peptides:
+			experimental_probability = 0.9
+		if control_peptides > shaved_peptides:
+			experimental_probability = 0.1
+		if control_peptides == shaved_peptides:
+			experimental_probability = 0.5
+	else:
+		for i in range(fifty_percent_cutoff, sample_size + 1):
+			total_probability += hypergeometric_distribution(total_size,control_peptides,sample_size,i)
+			experimental_probability = 1 - total_probability
 
-	experimental_probability = 1 - total_probability
+
 	final_probability = calculate_bayesian_probability(bayesian_prior, experimental_probability)
 
-	print control_peptides, ",", shaved_peptides, ",", bayesian_prior, ",", experimental_probability, ",", final_probability
+	print str(control_peptides) + "," + str(shaved_peptides) + "," + str(bayesian_prior) + "," + str(experimental_probability) + "," +  str(final_probability)
 
 if (len(sys.argv) < 2):
 	print "Usage:", sys.argv[0], "[csv-file]"
-	exit()
+	sys.exit()
 
 process_arguments(sys.argv)
 
@@ -65,9 +84,10 @@ try:
 	csv_file = open(sys.argv[1], "rU")
 except:
 	print "Could not find the specified input csv file:", sys.argv[1]
-	exit()
+	sys.exit()
 
 line_at = 0
+print_header()
 for line in csv.reader(csv_file, delimiter=','):
 	if line_at == 0 and header_line:
 		pass
