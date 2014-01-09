@@ -7,13 +7,17 @@ header_line = False
 accurate = False
 
 
+# See function below
 def choose(n,k):
     if k == 0:
     	return 1.0
     return float((n * choose(n - 1, k - 1)) / k)
 
-
+# Define our own function so the code doesn't have dependencies people have to install
 def hypergeometric_distribution(N,K,n,k):
+	# Test if the hypergeometric distribution cannot be calculted for these values
+	if ((k > K) or (n-k > N-K) or (n > N)):
+		return None 
 	numerator_1 = choose(K,k)
 	numerator_2 = choose(N-K,n-k)
 	denominator = choose(N,n)
@@ -35,10 +39,9 @@ def process_arguments(arguments):
 		if argument == "-accurate":
 			accurate = True
 
+# Bayes... hooray
 def calculate_bayesian_probability(prior, experimental):
 	return (prior * experimental) / ((prior * experimental) + ((1 - prior) * (1- experimental)))
-
-
 
 def print_header():
 	print "Control Peptides,Shaved Peptides,Bayesian Prior,Experimental Probability,Calculated Bayesian Probability"
@@ -57,6 +60,8 @@ def process_line(values, line_number):
 	fifty_percent_cutoff = int(math.ceil(float(sample_size) / 2))
 	total_probability = 0
 
+	print str(control_peptides), str(shaved_peptides), str(bayesian_prior), str(total_size), str(sample_size), str(fifty_percent_cutoff)
+
 	if total_size < 5:
 		if shaved_peptides > control_peptides:
 			experimental_probability = 0.9
@@ -66,9 +71,15 @@ def process_line(values, line_number):
 			experimental_probability = 0.5
 	else:
 		for i in range(fifty_percent_cutoff, sample_size + 1):
-			total_probability += hypergeometric_distribution(total_size,control_peptides,sample_size,i)
+			current_hypergeometric_distribution = hypergeometric_distribution(total_size,control_peptides,sample_size,i)
+			if (current_hypergeometric_distribution == None):
+				if shaved_peptides > control_peptides:
+					experimental_probability = 0.9
+				if control_peptides > shaved_peptides:
+					experimental_probability = 0.1
+				break
+			total_probability += current_hypergeometric_distribution
 			experimental_probability = 1 - total_probability
-
 
 	final_probability = calculate_bayesian_probability(bayesian_prior, experimental_probability)
 
@@ -76,6 +87,7 @@ def process_line(values, line_number):
 
 if (len(sys.argv) < 2):
 	print "Usage:", sys.argv[0], "[csv-file]"
+	print "use -header argument after csv-file if the csv file contains a header line"
 	sys.exit()
 
 process_arguments(sys.argv)
