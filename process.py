@@ -13,6 +13,7 @@ def choose(n,k):
     	return 1.0
     return float((n * choose(n - 1, k - 1)) / k)
 
+    # 12, 4, 5, 5
 # Define our own function so the code doesn't have dependencies people have to install
 def hypergeometric_distribution(N,K,n,k):
 	# Test if the hypergeometric distribution cannot be calculted for these values
@@ -60,8 +61,6 @@ def process_line(values, line_number):
 	fifty_percent_cutoff = int(math.ceil(float(sample_size) / 2))
 	total_probability = 0
 
-	print str(control_peptides), str(shaved_peptides), str(bayesian_prior), str(total_size), str(sample_size), str(fifty_percent_cutoff)
-
 	if total_size < 5:
 		if shaved_peptides > control_peptides:
 			experimental_probability = 0.9
@@ -70,16 +69,24 @@ def process_line(values, line_number):
 		if control_peptides == shaved_peptides:
 			experimental_probability = 0.5
 	else:
+		# We produce a result if any of the hypergeometric distributions are valid, but if none are, fall back to the logic outlined above
+		valid = False
 		for i in range(fifty_percent_cutoff, sample_size + 1):
 			current_hypergeometric_distribution = hypergeometric_distribution(total_size,control_peptides,sample_size,i)
 			if (current_hypergeometric_distribution == None):
+				current_hypergeometric_distribution = 0.0
+			else:
+				valid = True
+			total_probability += current_hypergeometric_distribution
+			if valid:
+				experimental_probability = 1 - total_probability
+			else:
 				if shaved_peptides > control_peptides:
 					experimental_probability = 0.9
 				if control_peptides > shaved_peptides:
 					experimental_probability = 0.1
-				break
-			total_probability += current_hypergeometric_distribution
-			experimental_probability = 1 - total_probability
+				if control_peptides == shaved_peptides:
+					experimental_probability = 0.5
 
 	final_probability = calculate_bayesian_probability(bayesian_prior, experimental_probability)
 
