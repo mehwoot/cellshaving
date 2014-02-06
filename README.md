@@ -1,5 +1,16 @@
 ## Repository for the Cell Shaving program.
 
+This program calculates values for blah blah.
+
+The program takes as an argument the comma separated values (csv) file as input, and outputs a csv file containing the results.  An optional -header argument can be provided that makes the program ignore the first line of the csv file (used if the file contains a header line).
+
+The csv file should contain three columns.  The first is the number of Control Peptides in the sample, the second is the number of Shaved Peptides in the sample, and the third is the Bayesian prior you have calculated for the sample.
+
+The output will contain 5 columns, the first three as in the input file, plus the Calculated Experimental Probability, as well as the Calculated Bayesian Probability from the prior and the experimental probability.
+
+Examples of these files can be seen in example1.csv and example2.csv.
+
+
 ## Windows
 
 First, download https://github.com/mehwoot/cellshaving/raw/master/cell_shaving.zip and unzip the file.
