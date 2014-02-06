@@ -1,6 +1,6 @@
 ## Repository for the Cell Shaving program.
 
-This program calculates values for blah blah.
+This program calculates the probability of a protein being surface-exposed based on the number of peptides identified by cell shaving proteomics utilising a false positive control strategy. It will calculate a probability based purely on the number of peptides found in the shaved fraction “shaved peptides” and on the number of peptides found in the control fraction “control peptides”. Additionally a final adjusted probability integrating prior bioinformatic data (later referred to as the Bayesian) can be calculated provided the probability the protein is surface-exposed (typically by software such as PSORTb, LocateP, SURFG+, etc.
 
 The program takes as an argument the comma separated values (csv) file as input, and outputs a csv file containing the results.  An optional -header argument can be provided that makes the program ignore the first line of the csv file (used if the file contains a header line).
 
