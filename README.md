@@ -27,7 +27,7 @@ You should now be able to run the program by
 
 You can write the output of the program to a file like so:
 
-```process.exe example2.csv -header > output.csv```
+```process.exe example1.csv -header > output.csv```
 
 
 ## OSX / Linux
@@ -51,7 +51,7 @@ You should now be able to run the program by
 
 You can write the output of the program to a file like so:
 
-```python process.py example2.csv -header > output.csv```
+```python process.py example1.csv -header > output.csv```
 
 ## Help
 
