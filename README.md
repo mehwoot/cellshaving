@@ -52,3 +52,7 @@ You should now be able to run the program by
 You can write the output of the program to a file like so:
 
 ```python process.py example2.csv -header > output.csv```
+
+## Help
+
+Any questions about the operation of the program can be directed to robinson.gareth@gmail.com.  Any questions about the scientific implications should be directed to xx
