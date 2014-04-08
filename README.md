@@ -55,4 +55,4 @@ You can write the output of the program to a file like so:
 
 ## Help
 
-Any questions about the operation of the program can be directed to robinson.gareth@gmail.com.  Any questions about the scientific implications should be directed to xx
+Any questions about the operation of the program can be directed to robinson.gareth@gmail.com.  Any questions about the scientific implications should be directed to stuart.cordwell@sydney.edu.au.
